@@ -21,17 +21,32 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: _title,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => HomeScreen(),
-        '/profile': (context) => ProfileScreen(),
-        '/notifications': (context) => NotificationScreen(),
-        '/settings': (context) => SettingsScreen(),
-      },
-      // home: MyStatefulWidget(),
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(text: 'Left',),
+                Tab(text: 'Middle',),
+                Tab(text: 'Right',),
+              ],
+            ),
+            title: Text('Tabs'),
+          ),
+          body: TabBarView(
+            children: [
+              Center(child: Text('Left')),
+              Center(child: Text('Middle')),
+              Center(child: Text('Right')),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -92,7 +107,6 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-
 class HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -114,7 +128,6 @@ class HomeDrawer extends StatelessWidget {
                 fit: BoxFit.fill,
               ),
             ),
-
             RichText(
                 text: TextSpan(children: [
               TextSpan(
@@ -190,7 +203,6 @@ class HomeDrawer extends StatelessWidget {
     ]));
   }
 }
-
 
 /// This is the stateful widget that the main application instantiates.
 class MyStatefulWidget extends StatefulWidget {
