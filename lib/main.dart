@@ -1,98 +1,79 @@
-
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
-
-/// This is the main application widget.
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
+void main() {
+  runApp(MyApp());
 }
 
-class _MyAppState extends State<MyApp> {
-  int index = 0;
-  List<Widget> _widgets = [HomeScreen(), ProfileScreen(), NotificationScreen(),SettingsScreen()];
-  tapped(int tappedIndex) {
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+      ),
+      home: MyHomePage(title: 'Sadaqat Ali',),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key,required this.title}) : super(key: key);
+  // MyHomePage({Key key, this.title}) : super(key: key);
+  final String title;
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  String text_value = 'Hello User';
+  change() {
     setState(() {
-      index = tappedIndex;
+      text_value = 'Hello 217967';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: _widgets[index],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: index,
-          onTap: tapped,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(icon: new Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: new Icon(Icons.person), label: 'Profile'),
-            BottomNavigationBarItem(icon: new Icon(Icons.notifications),label: 'Notifications'),
-            BottomNavigationBarItem(icon: new Icon(Icons.settings),label: 'Settings'),
+    final textfield = Container(
+      padding: EdgeInsets.all(16),
+      child: Text('$text_value', style: TextStyle(fontSize: 24)),
+    );
+    final button = Material(
+      elevation: 3,
+      borderRadius: BorderRadius.horizontal(),
+      child: ElevatedButton(
+        onPressed: () {
+          change();
+        },
+        child: Text(
+          'Press',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 24),
+          
+        ),
+      ),
+    );
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sadaqat Ali'),
+        backgroundColor: Colors.blueAccent,
+        leading: Row(
+          children: [
+            Container(
+              child: CircleAvatar(
+                backgroundImage: NetworkImage('https://i.ibb.co/DbGHyY4/IMG-20190507-143957-2.jpg'),
+
+              ),
+            )
           ],
+        ),
+      ),
+      body: Center(
+        child: Column(
+          children: <Widget>[textfield, button],
         ),
       ),
     );
   }
 }
-
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Screen'),
-      ),
-      body: Center(
-        child: Text('Home Screen'),
-      ),
-    );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile Screen'),
-      ),
-      body: Center(
-        child: Text('Profile Screen'),
-      ),
-    );
-  }
-}
-
-class NotificationScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications Screen'),
-      ),
-      body: Center(
-        child: Text('Notifications Screen'),
-      ),
-    );
-  }
-}
-
-class SettingsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings Screen'),
-      ),
-      body: Center(
-        child: Text('Settings Screen'),
-      ),
-    );
-  }
-}
-
