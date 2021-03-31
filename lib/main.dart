@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LoginPage(title: 'Login'),
-        '/home': (context) => HomeScreen()
+        '/home': (context) => HomeScreen(),
+        '/calculate': (context) => CalculationScreen()
       },
     );
   }
@@ -232,12 +233,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-class ScreenArguments {
-  final String title;
-
-  ScreenArguments(this.title);
-}
-
 class HomeScreen extends StatefulWidget {
   // MyHomePage({Key key, this.title}) : super(key: key);
   const HomeScreen({key, this.title}) : super(key: key);
@@ -258,7 +253,8 @@ class _HomeScreenState extends State<HomeScreen> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   static const routeName = '/home';
   final _formKey = GlobalKey<FormState>();
-  double _firstNumber = 0;
+  String _firstNumber = "";
+  String _secondNumber = "";
 
   @override
   Widget build(BuildContext context) {
@@ -268,13 +264,13 @@ class _HomeScreenState extends State<HomeScreen> {
       keyboardType: TextInputType.number,
       onChanged: (text) {
         setState(() {
-          this._firstNumber = text as double;
+          this._firstNumber = text;
         });
       },
       decoration: const InputDecoration(
-          labelText: 'First Number',
-          hintText: 'Enter First Number Here',
-          ),
+        labelText: 'First Number',
+        hintText: 'Enter First Number Here',
+      ),
       // obscureText: _obscureText,
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -288,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
       keyboardType: TextInputType.number,
       onChanged: (text) {
         setState(() {
-          this._firstNumber = text as double;
+          this._secondNumber = text;
         });
       },
       decoration: const InputDecoration(
@@ -313,8 +309,9 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            // Navigator.pushNamed(context, "/home",
-            //     arguments: ScreenArguments(_username));
+            Navigator.pushNamed(context, "/calculate",
+                arguments:
+                    CalculateScreenArguments(_firstNumber, _secondNumber));
           }
         },
         child: Text("Proceed",
@@ -358,4 +355,58 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ));
   }
+}
+
+class CalculationScreen extends StatefulWidget {
+  // MyHomePage({Key key, this.title}) : super(key: key);
+  const CalculationScreen({key, this.title}) : super(key: key);
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
+  final String title;
+  @override
+  _CalculationScreenState createState() => _CalculationScreenState();
+}
+
+class _CalculationScreenState extends State<CalculationScreen> {
+  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  static const routeName = '/calculate';
+
+  @override
+  Widget build(BuildContext context) {
+    final CalculateScreenArguments args =
+        ModalRoute.of(context).settings.arguments;
+    var result = int.parse(args.firstDigit) + int.parse(args.secondDigit);
+    var resultString = '${args.firstDigit} + ${args.secondDigit}  =  ${result}';
+    final calculateText = Text(resultString);
+
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Calculate Screen'),
+        ),
+        body: Center(
+          child: Container(
+            padding: EdgeInsets.all(25),
+            child: calculateText,
+          ),
+        ));
+  }
+}
+
+class ScreenArguments {
+  final String title;
+
+  ScreenArguments(this.title);
+}
+
+class CalculateScreenArguments {
+  String firstDigit;
+  String secondDigit;
+
+  CalculateScreenArguments(this.firstDigit, this.secondDigit);
 }
