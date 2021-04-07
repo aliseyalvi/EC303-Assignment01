@@ -1,412 +1,298 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login UI',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        // visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      // home: MyHomePage(title: 'Login'),
+      title: 'Flutter Login UI',
       initialRoute: '/',
       routes: {
-        '/': (context) => LoginPage(title: 'Login'),
-        '/home': (context) => HomeScreen(),
-        '/calculate': (context) => CalculationScreen()
+        '/': (context) => resume(),
+        // '/': (context) => MyApp(),
       },
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+      ),
+      // home: MyHomePage(title: 'Flutter Login'),
     );
   }
 }
 
-class LoginPage extends StatefulWidget {
-  // MyHomePage({Key key, this.title}) : super(key: key);
-  const LoginPage({key, this.title}) : super(key: key);
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-  final String title;
+class resume extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _resumeState createState() => _resumeState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-  bool _obscureText = true;
-  String _password = "";
-  String _username = "";
-  bool value = false;
-  bool _passwordVisible = false;
-  final _formKey = GlobalKey<FormState>();
+class _resumeState extends State<resume> {
+  bool get hasFocus => false;
+  @override
+  Widget build(BuildContext context) {
+    final personal_info = MaterialButton(
+      minWidth: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+      onPressed: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => personal()));
+      },
+      child: Text(
+        "Personal Information",
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.red),
+      ),
+    );
 
-  void _toggle() {
+    final cover_letter = MaterialButton(
+      minWidth: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+      onPressed: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => coverletter()));
+      },
+      child: Text(
+        "Cover Letter",
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.red),
+      ),
+    );
+
+    return new Scaffold(
+        appBar: AppBar(
+          title: Text("Resume Builder"),
+        ),
+        body: ListView(
+          children: <Widget>[personal_info, cover_letter],
+        ));
+  }
+}
+
+class personal extends StatefulWidget {
+  @override
+  _personalState createState() => _personalState();
+}
+
+class _personalState extends State<personal> {
+  bool _value = false;
+  void changevalue(bool value) {
     setState(() {
-      _obscureText = !_obscureText;
+      _value = value;
     });
   }
 
   @override
-  Widget buildCheckbox() => ListTile(
-        leading: Checkbox(
-          value: value,
-          onChanged: (value) {
-            setState(() {
-              this.value = value;
-            });
-          },
-        ),
-        title: Text(
-          'Remember Me',
-          style: const TextStyle(fontSize: 12.0),
-        ),
-      );
-
   Widget build(BuildContext context) {
-    bool checkBoxValue = true;
-    final emailField = TextFormField(
-      onChanged: (text) {
-        setState(() {
-          this._username = text;
-        });
-      },
-      decoration: const InputDecoration(
-          labelText: 'User Name',
-          hintText: 'Enter Your User Name',
-          icon: const Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: const Icon(Icons.email))),
-      // obscureText: _obscureText,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter username';
-        }
-        return null;
-      },
-    );
-    final passwordField = TextField(
-      obscureText: true,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Password",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-    final loginButon = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Colors.blueAccent,
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-        onPressed: () {
-          if (_formKey.currentState.validate()) {
-            Navigator.pushNamed(context, "/home",
-                arguments: ScreenArguments(_username));
-          }
-        },
-        child: Text("Login",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
-
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Login'),
-        backgroundColor: Colors.blueAccent,
+        title: Text('Personal Information'),
       ),
       body: Center(
-        child: Container(
-          color: Colors.white70,
-          child: Padding(
-            padding: const EdgeInsets.all(25.0),
+        child: ListView(children: [
+          Container(
+            color: Colors.grey.shade300,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // SizedBox(
-                //   height: 155.0,
-                //   child: Image.network(
-                //     'https://st3.depositphotos.com/12985790/18246/i/600/depositphotos_182461084-stock-photo-anonymous.jpg',
-                //     fit: BoxFit.contain,
-                //   ),
-                // ),
+              children: [
+                Card(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: Text(
+                      'Name:',
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ), //name
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'User Name',
+                    hintText: 'Enter Your User Name',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                //name
+                Card(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: Text(
+                      'Address:',
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ), //address
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Address',
+                    hintText: 'Enter Your Address',
+                    border: OutlineInputBorder(),
+                  ),
+                ), //address
+                Card(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: Text(
+                      'Email:',
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ), //email
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'Enter Your Email',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                Card(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: Text(
+                      'Number:',
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ), //email
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Number',
+                    hintText: 'Enter Your Number',
+                    border: OutlineInputBorder(),
+                  ),
+                ), //email
+                const SizedBox(
+                  height: 12,
+                ),
+                new SwitchListTile(
+                    activeColor: Colors.red,
+                    activeTrackColor: Colors.yellow,
+                    title: Text('Photo'),
+                    value: _value,
+                    onChanged: (bool value) {
+                      changevalue(value);
+                    }),
+                // Image.asset(_value ? 'images/mypic.jpeg' : '', height: 100),
                 CircleAvatar(
                     radius: 75,
                     backgroundImage: NetworkImage(
                         'https://st3.depositphotos.com/12985790/18246/i/600/depositphotos_182461084-stock-photo-anonymous.jpg')),
-                SizedBox(height: 45.0),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      emailField,
-                      TextFormField(
-                        keyboardType: TextInputType.text,
-                        obscureText:
-                            !_passwordVisible, //This will obscure text dynamically
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          hintText: 'Enter your password',
-                          icon: const Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: const Icon(Icons.lock)),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              // Based on passwordVisible state choose the icon
-                              _passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Theme.of(context).primaryColorDark,
-                            ),
-                            onPressed: () {
-                              // Update the state i.e. toogle the state of passwordVisible variable
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
-                            },
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter password';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(
-                        height: 35.0,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(child: buildCheckbox()),
-                          Expanded(
-                              child: Text(
-                            'Forget Password',
-                            style: TextStyle(color: Colors.blue),
-                            textAlign: TextAlign.end,
-                          ))
-                        ],
-                      ),
-                      // SizedBox(
-                      loginButon,
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
-        ),
+        ]),
       ),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  // MyHomePage({Key key, this.title}) : super(key: key);
-  const HomeScreen({key, this.title}) : super(key: key);
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-  final String title;
+class coverletter extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _coverletterState createState() => _coverletterState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-  static const routeName = '/home';
-  final _formKey = GlobalKey<FormState>();
-  String _firstNumber = "";
-  String _secondNumber = "";
+class _coverletterState extends State<coverletter> {
+  bool _value = false;
+  void changevalue(bool value) {
+    setState(() {
+      _value = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
-
-    final firstField = TextFormField(
-      keyboardType: TextInputType.number,
-      onChanged: (text) {
-        setState(() {
-          this._firstNumber = text;
-        });
-      },
-      decoration: const InputDecoration(
-        labelText: 'First Number',
-        hintText: 'Enter First Number Here',
-      ),
-      // obscureText: _obscureText,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a valid number';
-        }
-        return null;
-      },
-    );
-
-    final secondfField = TextFormField(
-      keyboardType: TextInputType.number,
-      onChanged: (text) {
-        setState(() {
-          this._secondNumber = text;
-        });
-      },
-      decoration: const InputDecoration(
-        labelText: 'Second Number',
-        hintText: 'Enter Second Number Here',
-      ),
-      // obscureText: _obscureText,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a valid number';
-        }
-        return null;
-      },
-    );
-
-    final proceedButton = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Colors.blueAccent,
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-        onPressed: () {
-          if (_formKey.currentState.validate()) {
-            Navigator.pushNamed(context, "/calculate",
-                arguments:
-                    CalculateScreenArguments(_firstNumber, _secondNumber));
-          }
-        },
-        child: Text("Proceed",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
-
     return Scaffold(
-        appBar: AppBar(
-          title: Text(args.title),
-        ),
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.all(25),
+      appBar: AppBar(
+        title: Text('Cover Letter'),
+      ),
+      body: Center(
+        child: ListView(children: [
+          Container(
+            color: Colors.grey.shade300,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      firstField,
-                      secondfField,
-                      SizedBox(
-                        height: 35.0,
+              children: [
+                new SwitchListTile(
+                    title: Text(
+                      'Cover Letter',
+                      style:
+                          TextStyle(fontSize: 20, color: Colors.grey.shade800),
+                    ),
+                    value: _value,
+                    onChanged: (bool value) {
+                      changevalue(value);
+                    }),
+                Card(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: Text(
+                      'Date:',
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 20,
                       ),
-
-                      // SizedBox(
-                      proceedButton,
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ), //email
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Enter date',
+                    border: OutlineInputBorder(),
+                  ),
+                ), //address
+                Card(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: Text(
+                      'Addressed To ( Optional ) :',
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ), //email
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Enter Address',
+                    border: OutlineInputBorder(),
+                  ),
+                ), //email
+                Card(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: Text(
+                      'Body :',
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ), //email
+                TextField(
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    hintText: 'Enter Body',
+                    border: OutlineInputBorder(),
+                  ),
+                ), //email
               ],
             ),
           ),
-        ));
+        ]),
+      ),
+    );
   }
-}
-
-class CalculationScreen extends StatefulWidget {
-  // MyHomePage({Key key, this.title}) : super(key: key);
-  const CalculationScreen({key, this.title}) : super(key: key);
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-  final String title;
-  @override
-  _CalculationScreenState createState() => _CalculationScreenState();
-}
-
-class _CalculationScreenState extends State<CalculationScreen> {
-  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-  static const routeName = '/calculate';
-
-  @override
-  Widget build(BuildContext context) {
-    final CalculateScreenArguments args =
-        ModalRoute.of(context).settings.arguments;
-    var result = int.parse(args.firstDigit) + int.parse(args.secondDigit);
-    var resultString = '${args.firstDigit} + ${args.secondDigit}  =  ${result}';
-    final calculateText = Text(resultString);
-
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Calculate Screen'),
-        ),
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.all(25),
-            child: calculateText,
-          ),
-        ));
-  }
-}
-
-class ScreenArguments {
-  final String title;
-
-  ScreenArguments(this.title);
-}
-
-class CalculateScreenArguments {
-  String firstDigit;
-  String secondDigit;
-
-  CalculateScreenArguments(this.firstDigit, this.secondDigit);
 }
