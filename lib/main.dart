@@ -19,11 +19,10 @@ class recipebook extends StatefulWidget {
 }
 
 class _recipebookState extends State<recipebook> {
-
-  final List<String> recepieImages = <String>['burger', 'pizza'];
-  final List<String> recepieNames = <String>['burger', 'pizza'];
-  final List<String> recepiePrep = <String>['30', '50'];
-  final List<String> recepieDesc = <String>['This is burger', 'This is Pizza'];
+  final List<String> recepieImages = <String>['burger', 'pizza','fried-chicken','Fast-food-meal','burger', 'pizza','fried-chicken','Fast-food-meal'];
+  final List<String> recepieNames = <String>['burger', 'pizza','fried chicken', 'fast food meal','burger', 'pizza','fried chicken', 'fast food meal'];
+  final List<String> recepiePrep = <String>['30', '50' , '60' , '40', '30', '50' , '60' , '40'];
+  final List<String> recepieDesc = <String>['This is burger', 'This is Pizza', 'This is Fried Chicken', 'This is Fast Food Meal','This is burger', 'This is Pizza', 'This is Fried Chicken', 'This is Fast Food Meal'];
 
   @override
   Widget build(BuildContext context) {
@@ -38,75 +37,36 @@ class _recipebookState extends State<recipebook> {
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           )),
       body: SafeArea(
-          child: ListView.separated(
-        padding: const EdgeInsets.all(8),
-        itemCount: recepieImages.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            height: 50,
-            // color: Colors.amber[colorCodes[index]],
-            // child: Center(child: Text('Entry ${entries[index]}')),
-            child: InkWell(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: CircleAvatar(
-                      radius: 30,
-                      backgroundImage:
-                          AssetImage('images/${recepieImages[index]}.jpg'),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                recepieNames[index],
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                'Prep Time: ${recepiePrep[index]} min',
-                                style: TextStyle(fontSize: 16),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => recipedetail(
-                            recipename: recepieImages[index],
-                            recipeimg: recepieNames[index],
-                            preptime: recepiePrep[index],
-                            recipedescription: recepieDesc[index])));
-
-              },
+          child: GridView.count(
+        crossAxisCount: 3,
+        children: List.generate(recepieImages.length, (index) {
+          return InkWell(
+            child: Container(
+              height: 40.0,
+              width: 40.0,
+              padding: EdgeInsets.all(5.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: Image.asset(
+                  'images/${recepieImages[index]}.jpg',
+                  height: 40.0,
+                  width: 40.0,
+                  fit: BoxFit.fill,
+                ),
+              )
             ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => recipedetail(
+                          recipename: recepieNames[index],
+                          recipeimg: recepieImages[index],
+                          preptime: recepiePrep[index],
+                          recipedescription: recepieDesc[index])));
+            },
           );
-        },
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
+        }),
       )),
     );
   }
