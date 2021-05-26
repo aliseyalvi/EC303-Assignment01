@@ -1,170 +1,66 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
+import 'dart:math';
 
 void main() {
-  runApp(MyApp());
+  runApp(calculator());
 }
 
-class MyApp extends StatelessWidget {
+class calculator extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return (MaterialApp(
-      home: recipebook(),
-    ));
+  _calculatorState createState() => _calculatorState();
+}
+
+class _calculatorState extends State<calculator> {
+  String clear = '';
+  String equation = '0';
+  String currentresult = '0';
+  String buttonpress(String sign) {
+    setState(() {
+      if (sign == '=') {
+        currentresult = equation;
+        try {
+          Parser p = Parser();
+          Expression exp = p.parse(currentresult);
+          ContextModel cm = ContextModel();
+          currentresult = '${exp.evaluate(EvaluationType.REAL, cm)}';
+        } catch (e) {
+          currentresult = 'Error';
+        }
+      } else if (sign == 'AC') {
+        equation = equation.substring(0, equation.length - 1);
+        if (equation == '') {
+          equation = '0';
+        }
+      } else {
+        if (equation == '0') {
+          equation = sign;
+        } else {
+          equation = equation + sign;
+        }
+      }
+    });
   }
-}
 
-class recipebook extends StatefulWidget {
-  @override
-  _recipebookState createState() => _recipebookState();
-}
-
-class _recipebookState extends State<recipebook> {
-  final List<String> recepieImages = <String>['burger', 'pizza','fried-chicken','Fast-food-meal','burger', 'pizza','fried-chicken','Fast-food-meal'];
-  final List<String> recepieNames = <String>['burger', 'pizza','fried chicken', 'fast food meal','burger', 'pizza','fried chicken', 'fast food meal'];
-  final List<String> recepiePrep = <String>['30', '50' , '60' , '40', '30', '50' , '60' , '40'];
-  final List<String> recepieDesc = <String>['This is burger', 'This is Pizza', 'This is Fried Chicken', 'This is Fast Food Meal','This is burger', 'This is Pizza', 'This is Fried Chicken', 'This is Fast Food Meal'];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: Colors.teal,
-          actions: [IconButton(icon: Icon(Icons.book), onPressed: () {})],
-          title: Text(
-            'My Recipe Book',
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          )),
-      body: SafeArea(
-          child: GridView.count(
-        crossAxisCount: 3,
-        children: List.generate(recepieImages.length, (index) {
-          return InkWell(
-            child: Container(
-              height: 40.0,
-              width: 40.0,
-              padding: EdgeInsets.all(5.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: Image.asset(
-                  'images/${recepieImages[index]}.jpg',
-                  height: 40.0,
-                  width: 40.0,
-                  fit: BoxFit.fill,
-                ),
+  Container buttonpad({String sign, Color buttoncolor}) {
+    return Container(
+      child: Expanded(
+        child: FlatButton(
+          color: buttoncolor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                '$sign',
+                style: TextStyle(fontSize: 24),
               )
-            ),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => recipedetail(
-                          recipename: recepieNames[index],
-                          recipeimg: recepieImages[index],
-                          preptime: recepiePrep[index],
-                          recipedescription: recepieDesc[index])));
-            },
-          );
-        }),
-      )),
-    );
-  }
-}
-
-class recipedetail extends StatefulWidget {
-  static const String routeName = '/recipedetail';
-  String recipename;
-  String recipeimg;
-  String preptime;
-  String recipedescription;
-  recipedetail(
-      {this.recipedescription, this.preptime, this.recipeimg, this.recipename});
-
-  @override
-  _recipedetailState createState() => _recipedetailState();
-}
-
-class _recipedetailState extends State<recipedetail> {
-  Expanded fullrecipe() {
-    return Expanded(
-      child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 3,
-              child: Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('images/${widget.recipeimg}.jpg'),
-                        fit: BoxFit.fill)),
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(20),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                decoration: BoxDecoration(border: Border.all()),
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            '${widget.recipename}',
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'Prep Time: ${widget.preptime} min',
-                            style: TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-                flex: 3,
-                child: Container(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Row(children: <Widget>[
-                          Text(
-                            'Complete Recipe Description: ',
-                            style: TextStyle(fontSize: 20),
-                          )
-                        ]),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                            width: double.infinity,
-                            child: Text(
-                              '${widget.recipedescription}',
-                              style: TextStyle(fontSize: 18),
-                            )),
-                      )
-                    ],
-                  ),
-                ))
-          ],
+            ],
+          ),
+          onPressed: () {
+            buttonpress(sign);
+          },
         ),
       ),
     );
@@ -172,19 +68,101 @@ class _recipedetailState extends State<recipedetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.teal,
-        title: Text(
-          widget.recipename,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[fullrecipe()],
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                  flex: 1,
+                  child: Container(
+                    // decoration: BoxDecoration(border: Border.all()),
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      '$equation',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  )),
+              Expanded(
+                  flex: 2,
+                  child: Container(
+                    decoration: BoxDecoration(border: Border.all()),
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      '$currentresult',
+                      style: TextStyle(fontSize: 36),
+                    ),
+                  )),
+              Expanded(
+                  flex: 6,
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: Row(
+                          children: [
+                            buttonpad(
+                                sign: '√', buttoncolor: Colors.orangeAccent),
+                            buttonpad(
+                                sign: '±', buttoncolor: Colors.orangeAccent),
+                            buttonpad(
+                                sign: '%', buttoncolor: Colors.orangeAccent),
+                            buttonpad(
+                                sign: 'AC', buttoncolor: Colors.orangeAccent),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            buttonpad(sign: '7'),
+                            buttonpad(sign: '8'),
+                            buttonpad(sign: '9'),
+                            buttonpad(
+                                sign: '/', buttoncolor: Colors.orangeAccent),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            buttonpad(sign: '4'),
+                            buttonpad(sign: '5'),
+                            buttonpad(sign: '6'),
+                            buttonpad(
+                                sign: '*', buttoncolor: Colors.orangeAccent),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            buttonpad(sign: '1'),
+                            buttonpad(sign: '2'),
+                            buttonpad(sign: '3'),
+                            buttonpad(
+                                sign: '-', buttoncolor: Colors.orangeAccent),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            buttonpad(sign: '.'),
+                            buttonpad(sign: '0'),
+                            buttonpad(sign: '='),
+                            buttonpad(
+                                sign: '+', buttoncolor: Colors.orangeAccent),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
+            ],
+          ),
         ),
       ),
     );
