@@ -1,170 +1,165 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:math_expressions/math_expressions.dart';
 import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 
+const DescTextStyle = TextStyle(fontSize: 18, color: Colors.grey);
+const NumberTextStyle = TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.grey);
 void main() {
-  runApp(calculator());
+  runApp(MyApp());
 }
 
-class calculator extends StatefulWidget {
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
-  _calculatorState createState() => _calculatorState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      home: MyHomePage(),
+    );
+  }
 }
 
-class _calculatorState extends State<calculator> {
-  String clear = '';
-  String equation = '0';
-  String currentresult = '0';
-  String buttonpress(String sign) {
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key key}) : super(key: key);
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int rno = 123456;
+  int rno1;
+  void RandomGenerator() {
+    int min = 90000000;
+    int max = 1000000000;
     setState(() {
-      if (sign == '=') {
-        currentresult = equation;
-        try {
-          Parser p = Parser();
-          Expression exp = p.parse(currentresult);
-          ContextModel cm = ContextModel();
-          currentresult = '${exp.evaluate(EvaluationType.REAL, cm)}';
-        } catch (e) {
-          currentresult = 'Error';
-        }
-      } else if (sign == 'AC') {
-        equation = equation.substring(0, equation.length - 1);
-        if (equation == '') {
-          equation = '0';
-        }
-      } else {
-        if (equation == '0') {
-          equation = sign;
-        } else {
-          equation = equation + sign;
-        }
-      }
+      rno1 = min + Random().nextInt(max - min);
     });
   }
 
-  Container buttonpad({String sign, Color buttoncolor}) {
-    return Container(
-      child: Expanded(
-        child: FlatButton(
-          color: buttoncolor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                '$sign',
-                style: TextStyle(fontSize: 24),
-              )
-            ],
-          ),
-          onPressed: () {
-            buttonpress(sign);
-          },
-        ),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      rno = prefs.getInt('rno');
+    });
+  }
+
+  setData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setInt('rno', rno1);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Container(
-                    // decoration: BoxDecoration(border: Border.all()),
-                    alignment: Alignment.centerRight,
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      '$equation',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  )),
-              Expanded(
-                  flex: 2,
-                  child: Container(
-                    decoration: BoxDecoration(border: Border.all()),
-                    alignment: Alignment.centerRight,
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      '$currentresult',
-                      style: TextStyle(fontSize: 36),
-                    ),
-                  )),
-              Expanded(
-                  flex: 6,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: Row(
-                          children: [
-                            buttonpad(
-                                sign: '√', buttoncolor: Colors.orangeAccent),
-                            buttonpad(
-                                sign: '±', buttoncolor: Colors.orangeAccent),
-                            buttonpad(
-                                sign: '%', buttoncolor: Colors.orangeAccent),
-                            buttonpad(
-                                sign: 'AC', buttoncolor: Colors.orangeAccent),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            buttonpad(sign: '7'),
-                            buttonpad(sign: '8'),
-                            buttonpad(sign: '9'),
-                            buttonpad(
-                                sign: '/', buttoncolor: Colors.orangeAccent),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            buttonpad(sign: '4'),
-                            buttonpad(sign: '5'),
-                            buttonpad(sign: '6'),
-                            buttonpad(
-                                sign: '*', buttoncolor: Colors.orangeAccent),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            buttonpad(sign: '1'),
-                            buttonpad(sign: '2'),
-                            buttonpad(sign: '3'),
-                            buttonpad(
-                                sign: '-', buttoncolor: Colors.orangeAccent),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            buttonpad(sign: '.'),
-                            buttonpad(sign: '0'),
-                            buttonpad(sign: '='),
-                            buttonpad(
-                                sign: '+', buttoncolor: Colors.orangeAccent),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
-            ],
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Using Shared Preferences',
           ),
         ),
+        body: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'You have generated random number:',
+                    style: DescTextStyle,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    '$rno1',
+                    style: NumberTextStyle,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'You saved this number in shared preference:',
+                    style: DescTextStyle,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    '$rno',
+                    style: NumberTextStyle,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CenterButton(
+                    bText: 'Load',
+                    onPressed: () {
+                      getData();
+                    },
+                  ),
+                  CenterButton(
+                    onPressed: () {
+                      RandomGenerator();
+                    },
+                    bText: 'Random',
+                  ),
+                  CenterButton(
+                    onPressed: () {
+                      setData();
+                    },
+                    bText: 'Save',
+                  ),
+                ],
+              )
+            ],
+          ),
+        ));
+  }
+}
+
+class CenterButton extends StatelessWidget {
+  CenterButton({@required this.bText, @required this.onPressed});
+  final bText;
+  final onPressed;
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      child: Text(
+        '$bText',
+        style: TextStyle(
+          fontSize: 16,
+            color: Colors.black54
+        ),
+      ),
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
       ),
     );
+
   }
 }
